@@ -32,7 +32,7 @@ from pathlib import Path
 from typing import cast
 
 from dotenv import dotenv_values
-from loguru import logger as log
+from loguru import logger
 from pickledb import PickleDB
 
 """log is the exported loguru instance for the project
@@ -40,14 +40,16 @@ from pickledb import PickleDB
         from mswappinit import log
         log.info("hello world")
 """
-log.remove()
-log.add(
+logger.remove()
+logger.add(
     # msw isn't wild about timestamps during development
     sys.stderr,
     format="{elapsed} {function} {file}:{line} - <level>{message}</level>",
 )
 
-log.info("msw logger initiallized")
+logger.info("msw logger initiallized")
+
+log = logger
 
 
 class ProjectConfiguration:
