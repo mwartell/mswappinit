@@ -1,17 +1,19 @@
+import os
+
+import pytest
+
 """these test the inner functionality of the mswappinit library.
 we skip the outer behavior because the auto-initialization
 needs support files in the working directory."""
 
-# surpress auto-initialiazer in mswappinit
-MSWAPPINIT_TESTING = True
-
-import pytest  # noqa E402
-
-from mswappinit import log  # noqa E402
+# Set the MSWAPPINIT_TESTING flag as an environment variable
+os.environ["MSWAPPINIT_TESTING"] = "1"
 
 
 def test_log():
     """Test the logging functionality."""
+    from mswappinit import log
+
     assert log is not None, "Log should be initialized"
     assert hasattr(log, "info"), "Log should have an info method"
     assert hasattr(log, "debug"), "Log should have a debug method"
@@ -36,7 +38,7 @@ def test_project(tmp_path):
 
 def test_quickdb(tmp_path):
     """Test the quick database functionality."""
-    from mswappinit import pickle_base
+    from mswappinit.quick_db import pickle_base
 
     db = pickle_base(tmp_path)
     assert db is not None, "Database should be initialized"

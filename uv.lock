@@ -44,7 +44,7 @@ wheels = [
 
 [[package]]
 name = "mswappinit"
-version = "2025.4.13"
+version = "2025.4.14"
 source = { editable = "." }
 dependencies = [
     { name = "loguru" },
