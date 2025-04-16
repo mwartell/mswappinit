@@ -83,5 +83,5 @@ if os.getenv("MSWAPPINIT_TESTING") is None:
     project = ProjectConfiguration()
     log.debug(project)
 else:
-    log.warning("MSWAPPINIT_TESTING is set, project is uninitialized")
-    project = ProjectConfiguration(mock="PROJECT_NAME=test")
+    log.warning("MSWAPPINIT_TESTING is set, project is dummy")
+    project = ProjectConfiguration(mock="PROJECT_NAME=test\nTEST_DATA=/tmp")

@@ -8,27 +8,29 @@ from mswappinit import log
 
 
 def pickle_base(data_dir: Path) -> PickleDB:
-    """initialize a pickledb instance for quick and dirty persistence"""
-
+    """Initialize a pickledb instance for quick and dirty persistence."""
     data_dir.mkdir(parents=True, exist_ok=True)
     path = data_dir / "quick_db.json"
     db = PickleDB(path)
-    log.info(f"quick_db initialized at {path}")
+    log.debug(f"quick_db initialized at {path}")
     return db
 
 
-if os.getenv("MSWAPPINIT_TESTING") is None:
+def initialize_production_quick_db() -> PickleDB:
+    """Initialize quick_db for the production environment."""
     from mswappinit import project
 
     try:
         assert project.data, "project.data not defined"
         data_dir = typing.cast(Path, project.data)
-        quick_db = pickle_base(data_dir)
+        return pickle_base(data_dir)
     except AssertionError as e:
         log.warning(f"quick_db not initialized: {e}")
-else:
-    from mswappinit import ProjectConfiguration
+        raise
 
-    mock = "PROJECT_NAME=test\nTEST_DATA=/tmp\nTEST_TOKEN=123456"
-    project = ProjectConfiguration(mock=mock)
-    log.warning("MSWAPPINIT_TESTING is set, quick_db will not be initialized")
+
+# Main initialization
+if os.getenv("MSWAPPINIT_TESTING") is None:
+    quick_db = initialize_production_quick_db()
+else:
+    log.warning("quick_db not initialized in testing mode")
