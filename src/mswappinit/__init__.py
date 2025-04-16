@@ -9,7 +9,7 @@ import os
 import sys
 from pathlib import Path
 
-from dotenv import dotenv_values
+from dotenv import dotenv_values, load_dotenv
 from loguru import logger
 
 """log is the exported loguru instance for the project
@@ -17,27 +17,29 @@ from loguru import logger
         from mswappinit import log
         log.info("hello world")
 """
-logger.remove()
-logger.add(
-    # msw isn't wild about timestamps during development
+log = logger
+log.remove()
+log.add(
     sys.stderr,
+    # msw isn't fond of ISO timestamps during development
     format="{elapsed} {function} {file}:{line} - <level>{message}</level>",
 )
-logger.info("msw logger initialized")
-
-log = logger
+log.debug("msw logger initialized")
 
 
 class ProjectConfiguration:
-    def __init__(self, mock: str | None = None):
-        # TODO: the configuration is not exported to the environment, should it be?
-        if mock:
-            env = dotenv_values(stream=io.StringIO(mock))
+    def __init__(self, testing_mock: str | None = None):
+        # we want the variables in the os environment and in a dict
+        if testing_mock:
+            load_dotenv(stream=io.StringIO(testing_mock))
+            env = dotenv_values(stream=io.StringIO(testing_mock))
         else:
+            load_dotenv()
             env = dotenv_values()
 
-        assert "PROJECT_NAME" in env, "PROJECT_NAME not found in dotenv file"
-        assert env["PROJECT_NAME"], "PROJECT_NAME must not be empty"
+        if "PROJECT_NAME" not in env or not env["PROJECT_NAME"]:
+            raise ImportError(f"{__name__} requires a PROJECT_NAME in .env")
+
         self.project_name = env["PROJECT_NAME"]
 
         prefix = env["PROJECT_NAME"].upper() + "_"
@@ -84,4 +86,4 @@ if os.getenv("MSWAPPINIT_TESTING") is None:
     log.debug(project)
 else:
     log.warning("MSWAPPINIT_TESTING is set, project is dummy")
-    project = ProjectConfiguration(mock="PROJECT_NAME=test\nTEST_DATA=/tmp")
+    project = ProjectConfiguration(testing_mock="PROJECT_NAME=test\nTEST_DATA=/tmp")

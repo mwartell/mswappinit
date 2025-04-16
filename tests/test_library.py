@@ -25,7 +25,7 @@ def test_project(tmp_path):
     from mswappinit import ProjectConfiguration
 
     mock = f"PROJECT_NAME=test\nTEST_DATA={tmp_path}\nTEST_TOKEN=123456"
-    env = ProjectConfiguration(mock=mock)
+    env = ProjectConfiguration(testing_mock=mock)
 
     assert env is not None, "Project should be initialized"
     # assert env.name == "test", "Project name should be 'test'"

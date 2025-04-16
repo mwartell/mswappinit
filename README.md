@@ -40,6 +40,7 @@ If `quick_db` is imported, a [pickleDB][https://patx.github.io/pickledb/]
 instance will be created in `project.data`.  This is a json backed key-value
 store. Writes should use the context manager:
 
+    from mswappinit.quick_db import quick_db
     with quick_db:
         db.set("Cyclopedidae", ["Palaeomyrmidon", "Cyclopes didactylus"])
 

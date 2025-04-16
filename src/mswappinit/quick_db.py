@@ -20,13 +20,10 @@ def initialize_production_quick_db() -> PickleDB:
     """Initialize quick_db for the production environment."""
     from mswappinit import project
 
-    try:
-        assert project.data, "project.data not defined"
-        data_dir = typing.cast(Path, project.data)
-        return pickle_base(data_dir)
-    except AssertionError as e:
-        log.warning(f"quick_db not initialized: {e}")
-        raise
+    if not project.data:
+        raise ImportError("project.data not defined in .env")
+    data_dir = typing.cast(Path, project.data)
+    return pickle_base(data_dir)
 
 
 # Main initialization
