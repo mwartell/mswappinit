@@ -12,7 +12,6 @@ def pickle_base(data_dir: Path) -> PickleDB:
     data_dir.mkdir(parents=True, exist_ok=True)
     path = data_dir / "quick_db.json"
     db = PickleDB(path)
-    log.debug(f"quick_db initialized at {path}")
     return db
 
 

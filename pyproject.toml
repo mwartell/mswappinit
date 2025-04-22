@@ -1,6 +1,6 @@
 [project]
 name = "mswappinit"
-version = "2025.04.17"
+version = "2025.04.22"
 description = "a personal, opinionated python app initializer"
 readme = "README.md"
 authors = [{ name = "matt wartell", email = "matt.wartel@gmail.com" }]
@@ -9,6 +9,7 @@ dependencies = ["loguru>=0.7.3", "pickledb>=1.3.2", "python-dotenv>=1.1.0"]
 
 [project.urls]
 "Homepage" = "https://github.com/mwartell/mswappinit"
+"Source" = "https://github.com/mwartell/mswappinit"
 
 [build-system]
 requires = ["hatchling"]

@@ -24,7 +24,6 @@ log.add(
     # msw isn't fond of ISO timestamps during development
     format="{elapsed} {function} {file}:{line} - <level>{message}</level>",
 )
-log.debug("msw logger initialized")
 
 
 class ProjectConfiguration:
@@ -83,7 +82,6 @@ def _uptype(value):
 
 if os.getenv("MSWAPPINIT_TESTING") is None:
     project = ProjectConfiguration()
-    log.debug(project)
 else:
     log.warning("MSWAPPINIT_TESTING is set, project is dummy")
     project = ProjectConfiguration(testing_mock="PROJECT_NAME=test\nTEST_DATA=/tmp")
