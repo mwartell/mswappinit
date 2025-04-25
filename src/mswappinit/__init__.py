@@ -102,7 +102,7 @@ def build_logger():
     date = datetime.datetime.now().strftime("%Y-%m-%d")
     path = log_dir / f"{project.name}-{date}.log"
 
-    logger.add(path, format=fmt, backtrace=True, diagnose=True, serialize=True)
+    logger.add(path, format=fmt, backtrace=True, diagnose=True)
     return logger
 
 
