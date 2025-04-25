@@ -1,6 +1,6 @@
 [project]
 name = "mswappinit"
-version = "2025.04.22"
+version = "2025.04.25"
 description = "a personal, opinionated python app initializer"
 readme = "README.md"
 authors = [{ name = "matt wartell", email = "matt.wartel@gmail.com" }]

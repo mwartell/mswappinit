@@ -29,7 +29,7 @@ def test_project(tmp_path):
 
     assert env is not None, "Project should be initialized"
     # assert env.name == "test", "Project name should be 'test'"
-    assert env.project_name == "test", "Project name should be 'test'"
+    assert env.name == "test", "Project name should be 'test'"
     assert env.data == tmp_path, "Project data should match the temporary directory"
     assert env.token == 123456
     with pytest.raises(AttributeError):
