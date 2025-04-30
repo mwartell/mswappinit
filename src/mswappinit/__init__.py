@@ -4,26 +4,23 @@ mswappinit - convenience wrappers for development configuration
 https://github.com/mwartell/mswappinit
 """
 
+import datetime
 import io
 import os
 import sys
+import typing
 from pathlib import Path
 
+import loguru
 from dotenv import dotenv_values, load_dotenv
-from loguru import logger
 
-"""log is the exported loguru instance for the project
-    usage:
-        from mswappinit import log
-        log.info("hello world")
-"""
-log = logger
-log.remove()
-log.add(
-    sys.stderr,
-    # msw isn't fond of ISO timestamps during development
-    format="{elapsed} {function} {file}:{line} - <level>{message}</level>",
-)
+# we explicitly don't import the quick_db module here so that it is not autoloaded
+#     import mswappinit.quick_db to use it
+
+__all__ = [
+    "project",
+    "log",
+]
 
 
 class ProjectConfiguration:
@@ -39,7 +36,7 @@ class ProjectConfiguration:
         if "PROJECT_NAME" not in env or not env["PROJECT_NAME"]:
             raise ImportError(f"{__name__} requires a PROJECT_NAME in .env")
 
-        self.project_name = env["PROJECT_NAME"]
+        self.name = env["PROJECT_NAME"].lower()
 
         prefix = env["PROJECT_NAME"].upper() + "_"
 
@@ -53,13 +50,13 @@ class ProjectConfiguration:
     def __getattr__(self, name) -> str | int | float | bool | Path:
         if name in self.env:
             return self.env[name]
-        raise AttributeError(f"no attribute {name} in {self.project_name} config")
+        raise AttributeError(f"no attribute {name} in {self.name} config")
 
     def __contains__(self, name) -> bool:
         return name in self.env
 
     def __str__(self) -> str:
-        return f"ProjectConfiguration<{self.project_name}: {self.env}>"
+        return f"ProjectConfiguration<{self.name}: {self.env}>"
 
 
 def _uptype(value):
@@ -83,5 +80,37 @@ def _uptype(value):
 if os.getenv("MSWAPPINIT_TESTING") is None:
     project = ProjectConfiguration()
 else:
-    log.warning("MSWAPPINIT_TESTING is set, project is dummy")
-    project = ProjectConfiguration(testing_mock="PROJECT_NAME=test\nTEST_DATA=/tmp")
+    print("MSWAPPINIT_TESTING is set, project is dummy")
+    project = ProjectConfiguration(
+        testing_mock="PROJECT_NAME=test\nTEST_DATA=/tmp\nTEST_LOG=/tmp\n"
+    )
+
+
+def build_logger():
+    logger = loguru.logger
+    logger.remove()
+    fmt = (
+        r"<i>{time}</i> "
+        r"<level>{level: <8}</level> "
+        r"{file.path}:{line} "
+        r"<lvl>{message}</lvl>"
+    )
+    logger.add(sys.stderr, format=fmt, colorize=True, backtrace=True, diagnose=True)
+
+    log_dir = typing.cast(Path, project.log)
+    log_dir.mkdir(parents=True, exist_ok=True)
+    date = datetime.datetime.now().strftime("%Y-%m-%d")
+    path = log_dir / f"{project.name}-{date}.log"
+
+    logger.add(path, format=fmt, backtrace=True, diagnose=True)
+    return logger
+
+
+"""log is the exported loguru instance for the project
+    usage:
+        from mswappinit import log
+        log.info("hello world")
+"""
+
+
+log = build_logger()
