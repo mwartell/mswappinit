@@ -92,7 +92,7 @@ def build_logger():
     fmt = (
         r"<i>{time}</i> "
         r"<level>{level: <8}</level> "
-        r"{file.path}:{line} "
+        r"{file}:{line} "
         r"<lvl>{message}</lvl>"
     )
     logger.add(sys.stderr, format=fmt, colorize=True, backtrace=True, diagnose=True)
